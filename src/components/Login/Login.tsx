@@ -1,14 +1,32 @@
 import { useState } from 'react';
 import { Box, Button, Container, TextField, Typography, Paper } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { login } from '../../services/authService';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle login logic here
-    console.log('Login attempt with:', { email, password });
+    setError('');
+    
+    try {
+      const response = await login({ email, password });
+      // Store the token or user data in localStorage/context
+      localStorage.setItem('token', response.token);
+      // Redirect to dashboard or home page
+      navigate('/dashboard');
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('An error occurred during login');
+      }
+      console.error('Login error:', err);
+    }
   };
 
   return (
@@ -25,6 +43,11 @@ export default function Login() {
           <Typography component="h1" variant="h5" sx={{ textAlign: 'center', mb: 3 }}>
             Sign in
           </Typography>
+          {error && (
+            <Typography color="error" sx={{ mb: 2 }}>
+              {error}
+            </Typography>
+          )}
           <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
             <TextField
               margin="normal"
@@ -64,4 +87,3 @@ export default function Login() {
     </Container>
   );
 }
-
