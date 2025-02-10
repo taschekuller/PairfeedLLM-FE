@@ -2,15 +2,16 @@
 import { Navigate, Outlet } from 'react-router-dom';
 
 interface RoleRouteProps {
-    user: {
-        id: string;
-        email: string;
-        role: string;
-    };
-    allowedRoles: string[];
+  user: {
+    id: string;
+    email: string;
+    fullName: string;
+    role: string;
+  };
+  allowedRoles: string[];
 }
 
-const RoleRoute = ({ user, allowedRoles } : RoleRouteProps) => {
+const RoleRoute = ({ user, allowedRoles }: RoleRouteProps) => {
   if (!user) {
     return <Navigate to="/login" replace />;
   }

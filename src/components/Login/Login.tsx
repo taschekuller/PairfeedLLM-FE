@@ -12,7 +12,7 @@ export default function Login() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    
+
     try {
       const response = await login({ email, password });
       // Store the token or user data in localStorage/context
