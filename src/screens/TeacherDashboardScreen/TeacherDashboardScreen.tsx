@@ -72,14 +72,15 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
     open?: boolean;
 }>(({ theme, open }) => ({
     flexGrow: 1,
-    padding: theme.spacing(3),
-    marginLeft: `-${drawerWidth}px`,
+    padding: theme.spacing(2),
+
+    marginLeft: `-${drawerWidth - 48}px`,
     transition: theme.transitions.create('margin', {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen,
     }),
     ...(open && {
-        marginLeft: -50,
+        marginLeft: 0,
         transition: theme.transitions.create('margin', {
             easing: theme.transitions.easing.easeOut,
             duration: theme.transitions.duration.enteringScreen,
@@ -97,7 +98,7 @@ const courses = [
     },
     {
         id: 2,
-        code: 'CEIT310',
+        code: 'CEIT419',
         name: 'Web Development',
         students: 38,
         description: 'Frontend and backend web development technologies',
@@ -109,8 +110,10 @@ export default function TeacherDashboardScreen() {
     const [open, setOpen] = useState(false);
     const [modalOpen, setModalOpen] = useState(false);
     const [newCourse, setNewCourse] = useState({
+        id: 0,
         code: '',
         name: '',
+        students: 0,
         description: '',
     });
 
@@ -133,12 +136,23 @@ export default function TeacherDashboardScreen() {
         // Handle course creation logic here
         console.log('New course:', newCourse);
         handleModalClose();
-        setNewCourse({ code: '', name: '', description: '' });
+        setNewCourse(newCourse => ({
+            ...newCourse,
+            id: courses.length + 1,
+            code: '',
+            name: '',
+            students: Number(0),
+            description: ''
+        }));
+        courses.push(newCourse);
     };
 
     return (
         <Box sx={{ display: 'flex' }}>
-            <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+            <AppBar
+                position="fixed"
+                sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                style={{ backgroundColor: '#d02031' }}>
                 <Toolbar>
                     <IconButton
                         color="inherit"
@@ -208,6 +222,15 @@ export default function TeacherDashboardScreen() {
                         />
                         <TextField
                             fullWidth
+                            label="Number of Students"
+                            name="students"
+                            value={newCourse.students}
+                            onChange={handleInputChange}
+                            margin="normal"
+                            required
+                        />
+                        <TextField
+                            fullWidth
                             label="Description"
                             name="description"
                             value={newCourse.description}
@@ -232,18 +255,29 @@ export default function TeacherDashboardScreen() {
 
             <Main open={open}>
                 <Toolbar />
-                <Button onClick={handleModalOpen} startIcon={<AddIcon />} sx={{ mb: 2 }}>
+                <Button
+                    onClick={handleModalOpen}
+                    startIcon={<AddIcon />}
+                    sx={{ mb: 2 }}
+                    style={{
+                        border: "1px solid #8bc34a",
+                        padding: 8,
+                        borderRadius: 8,
+                        backgroundColor: "#8bc34a",
+                        color: "white",
+
+                    }}>
                     Create Course
                 </Button>
                 <Grid2
                     container
-                    spacing={3}
-                    style={{ marginLeft: modalOpen ? '0px' : '36px' }}>
+                    spacing={3}>
                     {courses.map((course) => (
                         <Grid2 item xs={12} sm={6} md={4} key={course.id}>
                             <Tooltip title={course.description} arrow>
                                 <Card sx={{
-                                    minHeight: 200,
+                                    minHeight: 180,
+                                    minWidth: 300,
                                     transition: '0.3s',
                                     '&:hover': {
                                         transform: 'translateY(-5px)',
@@ -252,8 +286,12 @@ export default function TeacherDashboardScreen() {
                                 }}>
                                     <CardContent>
                                         <Box display="flex" alignItems="center" mb={2}>
-                                            <SchoolOutlined sx={{ mr: 1 }} />
-                                            <Typography variant="h6" component="div">
+                                            <SchoolOutlined
+                                                sx={{ mr: 1 }}
+                                                style={{
+                                                    color: "#D02031"
+                                                }} />
+                                            <Typography variant="h6" component="div" color='text.primary'>
                                                 {course.code}
                                             </Typography>
                                         </Box>
